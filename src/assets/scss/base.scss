@@ -1,0 +1,36 @@
+* {
+	box-sizing: border-box;
+	font-family: 'KievitPro', sans-serif;
+	color: #000;
+	font-variant: lining-nums;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	font-weight: normal;
+}
+
+button {
+	font-family: 'KievitPro', sans-serif;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	background: transparent;
+}
+
+ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+.container	{
+	max-width: 1300px;
+	padding: 0 20px;
+	margin: 0 auto;
+}
