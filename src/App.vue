@@ -5,15 +5,21 @@
 				<aside class="hotels__aside">
 					<div class="hotels__aside-inner">
 						<FilterByCountry v-model="filters[0].value" />
-						<FilterByStars v-model="filters[1].value"/>
+						<FilterByStars v-model="filters[1].value" />
+						<FilterByType v-model="filters[2].value"/>
+						<FilterByPrice v-model="filters[3].value"/>
 					</div>
 				</aside>
-				<main class="hotels__main" v-if="filteredHotels.length">
-					<Hotel v-for="(hotel, index) in filteredHotels" :key="hotel + index" :hotelData="hotel" />
+				<main class="hotels__main" v-if="hotelsSliced.length">
+					<Hotel 
+						v-for="(hotel, index) in hotelsSliced" 
+						:key="hotel + index"
+						:hotelData="hotel"
+					/>
 				</main>
 				<h1 v-else>Ничего не найдено</h1>
 			</div>
-			<button class="hotels__more" @click="moreHotels">Показать еще отели</button>
+			<button class="hotels__more" @click="hotelsCnt += 6">Показать еще отели</button>
 		</div>
 	</div>
 </template>
@@ -22,17 +28,20 @@
 	import Hotel from '@/components/Hotel'
 	import FilterByCountry from '@/components/FilterByCountry'
 	import FilterByStars from '@/components/FilterByStars'
+	import FilterByType from '@/components/FilterByType'
+	import FilterByPrice from '@/components/FilterByPrice'
 
 	export default {
 		name: 'App',
 		data() {
 			return {
 				hotels: [],
-				hotelsSliced: [],
 				hotelsCnt: 6,
 				filters: [
-					{name: 'country', value: '',getter: obj => obj.country.toLowerCase()},
-					{name: 'stars',value: '', getter: obj => obj.stars},
+					{name: 'country', value: '', getter: obj => obj.country.toLowerCase()},
+					{name: 'stars', value: '', getter: obj => obj.stars},
+					{name: 'type', value: 'Отель', getter: obj => obj.type.toLowerCase()},
+					{name: 'price', value: '', getter: obj => obj.min_price},
 				]
 			}
 		},
@@ -40,10 +49,12 @@
 			Hotel,
 			FilterByCountry,
 			FilterByStars,
+			FilterByType,
+			FilterByPrice
 		},
 		computed: {
 			filteredHotels() {
-				return this.filters.reduce((hotels, {value,getter,name}) => {
+				return this.filters.reduce((hotels, {value, getter, name}) => {
 					if(!value) return hotels
 					if (name == 'stars') {
 						if (value.length) {
@@ -53,28 +64,38 @@
 						}
 						return hotels
 					}
+					if (name == 'price') {
+						if (value.length) {
+							return hotels.filter(n => {
+								return getter(n) >= value[0] && 
+								getter(n) <= value[1]
+							})
+						}
+						return hotels
+					}
 					return hotels.filter(n => getter(n) === value.toLowerCase())
-					
-				}, this.hotelsSliced);
-			}
+				}, this.hotels);
+			},
+			hotelsSliced() {
+				return this.filteredHotels.slice(0, this.hotelsCnt)
+			},
 		},
 		methods: {
 			clickHotel() {
 				this.count++
 			},
-			moreHotels() { 
-				const nextHotels = this.hotels.slice(this.hotelsCnt, this.hotelsCnt + 6)
-				this.hotelsSliced = [...this.hotelsSliced, ...nextHotels]
-				this.hotelsCnt += 6
-			},
 			randomNum() {
 				return Math.floor(Math.random() * 999999999999999999).toString()
 			},
 		},
+		watch: {
+			filteredHotels() {
+				this.hotelsCnt = 6
+			}
+		},
 		async beforeMount() {
 			await this.$store.dispatch('fetchHotels')
 			this.hotels = this.$store.getters.getHotels
-			this.hotelsSliced = this.hotels.slice(0, this.hotelsCnt)
 		},
 	}
 
@@ -111,17 +132,7 @@
 		margin-right: 21px;
 	}
 
-	.hotels__aside-inner {
-		position: sticky;
-		left: 0;
-		top: 20px;
-	}
-
 	.filter__by-stars {
 		padding: 0 20px;
 	}
-
-
-	
-
 </style>

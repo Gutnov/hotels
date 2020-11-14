@@ -28,8 +28,8 @@ export default {
 
 <style lang="scss">
 	.filter {
-		border-radius: 2px;
 		position: relative;
+		margin-bottom: 20px;
 	}
 	.filter__header {
 		display: flex;
@@ -41,6 +41,7 @@ export default {
 		line-height: 17px;
 		font-weight: 500;
 		border: 1px solid #F3EFEA;
+		border-radius: 2px 2px 0 0;
 		cursor: pointer;
 
 		img {transition: transform .3s;}
@@ -52,11 +53,12 @@ export default {
 	.filter__content {
 		width: 100%;
 		padding: 0;
-		border: 1px solid transparent;
-		border-top: none;
 		max-height: 0;
-		transition: padding .1s linear, max-height .1s linear;
 		overflow: hidden;
+		border: 1px solid transparent;
+		border-radius: 0 0 2px 2px;
+		border-top: none;
+		transition: padding .1s linear, max-height .1s linear;
 		&.active {
 			border-color: #F3EFEA;
 			max-height: 300px; 
